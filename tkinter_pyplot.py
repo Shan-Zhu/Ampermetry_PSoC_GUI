@@ -103,7 +103,6 @@ class PyplotEmbed(tk.Frame):
         self.update_legend()
 
     def add_notes(self, _notes):
-        print 'adding notes: ', _notes
         self.data.notes[-1] = _notes
 
     def display_data_user_input(self, x_data, y_data):
@@ -129,9 +128,7 @@ class PyplotEmbed(tk.Frame):
             self.legend_displayed = True
         """ add the data to the plot area and update the legend """
         l = self.graph_area.axis.plot(x_data, y_data, label=_label)
-        print l
         self.data.colors.append(l[0].get_color())
-        print self.data.colors
         self.plotted_lines.append(l)
         self.update_legend()
 

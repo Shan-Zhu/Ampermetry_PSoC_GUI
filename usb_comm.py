@@ -1,13 +1,12 @@
-# from __future__ import division
-
-__author__ = 'Kyle V. Lopin'
-
 import logging
 import usb.core
 import usb.util
+import usb.backend.libusb0
+
 import amp_usb_helper as usb_helper
 import pyplot_data_class as data_class
 
+__author__ = 'Kyle V. Lopin'
 
 USB_IN_BYTE_SIZE = 32
 packet_size = 32
@@ -23,7 +22,7 @@ class AmpUsb(object):
     """
     def __init__(self, _master, _params, vendor_id=None, product_id=None):
         """
-        Initialize a communication channel to a PSOC with a USBFS module.  Use the default example for the
+        Initialize a communication channel to a PSoC with a USBFS module.  Use the default example for the
         USBFS HID example if no vendor or product id are inputted
 
         :param _master: the master program that is using the usb
@@ -94,7 +93,8 @@ class AmpUsb(object):
         :return:
         """
         """ attempt to find the PSoC amperometry device """
-        amp_device = usb.core.find(idVendor=_vendor_id, idProduct=_product_id)
+        backend = usb.backend.libusb0.get_backend()
+        amp_device = usb.core.find(idVendor=_vendor_id, idProduct=_product_id, backend=backend)
 
         """ if no device is found, print a warning to the output """
         if amp_device is None:
@@ -149,6 +149,15 @@ class AmpUsb(object):
     def get_export_channel(self, channel=None):
         canvas = self.master.graph
         usb_helper.get_and_display_data_from_export_channel(self, canvas, channel)
+
+    def set_electrode_config(self, num_electrodes):
+        """
+        The PSoC can perform either 2 electrode or 3 electrode measurements, send the device the command 'L|X' to
+        change its config where X is either 2 or 3 for the # of electrodes to use
+        :param _configs:
+        :return:
+        """
+        self.usb_write('L|' + str(num_electrodes))
 
     def format_divider(self, _sweep_rate):
         """

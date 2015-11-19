@@ -15,6 +15,7 @@ packet_size = 32
 
 user_sets_label_after_run = False
 
+
 def initialize(device):
     """
     generic function that should be called after initialing connecting to a device in usb_comm file
